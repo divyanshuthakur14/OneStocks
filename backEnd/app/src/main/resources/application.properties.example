@@ -1,11 +1,11 @@
 spring.application.name=app
 spring.datasource.url=jdbc:mysql://localhost:3306/onestocks_db
 spring.datasource.username=root
-spring.datasource.password=9893
+spring.datasource.password=CHANGE_ME
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 spring.web.cors.allowed-origins=http://localhost:4200
 server.port=8082
-jwt.secret=4d9fdf4583d6f8fa2705aca641a19962258f73d5d050432243942460a4f26598
+jwt.secret=GENERATE_64_HEX_CHARS_USING_OPENSSL_RAND_HEX_32
 jwt.expiration=86400000
