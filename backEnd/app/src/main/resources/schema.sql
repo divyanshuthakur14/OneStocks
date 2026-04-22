@@ -69,3 +69,13 @@ CREATE TABLE holdings (
     CONSTRAINT fk_hold_user  FOREIGN KEY (user_id)  REFERENCES users  (id),
     CONSTRAINT fk_hold_stock FOREIGN KEY (stock_id) REFERENCES stocks (id)
 );
+
+CREATE TABLE wallets (
+    id          BIGINT          NOT NULL AUTO_INCREMENT,
+    user_id     BIGINT          NOT NULL,
+    balance     DECIMAL(19, 4)  NOT NULL,
+    updated_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_wallets_user (user_id),
+    CONSTRAINT fk_wallet_user FOREIGN KEY (user_id) REFERENCES users (id)
+);
