@@ -20,12 +20,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
 
         return ResponseEntity.badRequest()
-                .body(new AuthResponse(false, errors, null, null));
+                .body(AuthResponse.builder().success(false).message(errors).build());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<AuthResponse> handleGenericError(Exception ex) {
         return ResponseEntity.internalServerError()
-                .body(new AuthResponse(false, "Something went wrong: " + ex.getMessage(), null, null));
+                .body(AuthResponse.builder().success(false).message("Something went wrong: " + ex.getMessage()).build());
     }
 }

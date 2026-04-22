@@ -2,59 +2,128 @@ package com.onestocks.app.service;
 
 import com.onestocks.app.dto.AuthResponse;
 import com.onestocks.app.dto.LoginRequest;
+import com.onestocks.app.dto.LogoutRequest;
+import com.onestocks.app.dto.RefreshRequest;
 import com.onestocks.app.dto.SignupRequest;
+import com.onestocks.app.model.RefreshToken;
+import com.onestocks.app.model.Role;
 import com.onestocks.app.model.User;
 import com.onestocks.app.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.onestocks.app.security.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public AuthResponse signup(SignupRequest request) {
-        
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return new AuthResponse(false, "Passwords do not match", null, null);
+            return AuthResponse.builder().success(false).message("Passwords do not match").build();
         }
-
         if (userRepository.existsByEmail(request.getEmail())) {
-            return new AuthResponse(false, "Email is already registered", null, null);
+            return AuthResponse.builder().success(false).message("Email is already registered").build();
         }
-
         if (userRepository.existsByUsername(request.getUsername())) {
-            return new AuthResponse(false, "Username is already taken", null, null);
+            return AuthResponse.builder().success(false).message("Username is already taken").build();
         }
 
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRememberMe(request.isRememberMe());
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .rememberMe(request.isRememberMe())
+                .role(Role.USER)
+                .build();
 
         userRepository.save(user);
 
-        return new AuthResponse(true, "Account created successfully", user.getUsername(), user.getEmail());
+        String accessToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        return AuthResponse.builder()
+                .success(true)
+                .message("Account created successfully")
+                .token(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .username(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
     }
 
     public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
-        User user = userRepository.findByEmail(request.getEmail())
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return AuthResponse.builder().success(false).message("Invalid email or password").build();
+        }
+
+        String accessToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        return AuthResponse.builder()
+                .success(true)
+                .message("Login successful")
+                .token(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .username(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+
+    public AuthResponse refresh(RefreshRequest request) {
+        RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken())
                 .orElse(null);
 
-        if (user == null) {
-            return new AuthResponse(false, "Invalid email or password", null, null);
+        if (refreshToken == null) {
+            return AuthResponse.builder().success(false).message("Invalid refresh token").build();
+        }
+        if (refreshTokenService.isRevoked(refreshToken)) {
+            return AuthResponse.builder().success(false).message("Refresh token has been revoked").build();
+        }
+        if (refreshTokenService.isExpired(refreshToken)) {
+            return AuthResponse.builder().success(false).message("Refresh token has expired, please login again").build();
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return new AuthResponse(false, "Invalid email or password", null, null);
+        User user = refreshToken.getUser();
+        String newAccessToken = jwtService.generateToken(user);
+
+        return AuthResponse.builder()
+                .success(true)
+                .message("Token refreshed successfully")
+                .token(newAccessToken)
+                .refreshToken(refreshToken.getToken())
+                .username(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+
+    public AuthResponse logout(LogoutRequest request) {
+        // Blacklist the access token
+        tokenBlacklistService.blacklist(request.getToken());
+
+        // Revoke the refresh token
+        User user = userRepository.findByEmail(
+                jwtService.extractUsername(request.getToken())
+        ).orElse(null);
+
+        if (user != null) {
+            refreshTokenService.revokeByUser(user);
         }
 
-        return new AuthResponse(true, "Login successful", user.getUsername(), user.getEmail());
+        return AuthResponse.builder()
+                .success(true)
+                .message("Logged out successfully")
+                .build();
     }
 }
