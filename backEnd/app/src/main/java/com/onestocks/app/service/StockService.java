@@ -8,12 +8,15 @@ import com.onestocks.app.model.Stock;
 import com.onestocks.app.repository.HoldingRepository;
 import com.onestocks.app.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -57,14 +60,44 @@ public class StockService {
         );
     }
 
+    // Simulates realistic market fluctuation — runs every 5 seconds.
+    // previousClose is set to the price before each update so day-change % stays meaningful.
+    @Scheduled(fixedRate = 5000)
+    public void simulatePriceUpdates() {
+        List<Stock> stocks = stockRepository.findAll();
+        if (stocks.isEmpty()) return;
+
+        Instant now = Instant.now();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (Stock stock : stocks) {
+            BigDecimal oldPrice = stock.getCurrentPrice();
+            if (oldPrice == null) continue;
+
+            double fluctuationPercent = random.nextDouble(-0.005, 0.005);
+            BigDecimal newPrice = oldPrice
+                    .add(oldPrice.multiply(BigDecimal.valueOf(fluctuationPercent)))
+                    .max(BigDecimal.ZERO)
+                    .setScale(4, RoundingMode.HALF_UP);
+
+            stock.setPreviousClose(oldPrice);
+            stock.setCurrentPrice(newPrice);
+            stock.setUpdatedAt(now);
+        }
+
+        stockRepository.saveAll(stocks);
+    }
+
     private StockSummaryResponse toSummary(Stock stock) {
         return new StockSummaryResponse(
+                stock.getId(),
                 stock.getSymbol(),
                 stock.getName(),
                 stock.getSector(),
                 stock.getCurrentPrice(),
                 stock.getPreviousClose(),
-                computeDayChangePercent(stock)
+                computeDayChangePercent(stock),
+                stock.getUpdatedAt()
         );
     }
 

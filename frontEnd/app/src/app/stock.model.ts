@@ -1,10 +1,12 @@
 export interface StockSummary {
+  id: number;
   symbol: string;
   name: string;
   sector: string;
   currentPrice: number;
   previousClose: number;
   dayChangePercent: number;
+  updatedAt: string;
 }
 
 export interface HoldingInfo {
