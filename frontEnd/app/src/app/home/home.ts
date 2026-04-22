@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly lastError = signal<string | null>(null);
   readonly selectedSymbol = signal<string | null>(null);
 
+
   ngOnInit(): void {
     this.username = this.authService.getUsername();
     this.pollSubscription = timer(0, 5000)
@@ -59,11 +60,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.selectedSymbol.set(null);
   }
 
-  logout(): void {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
-  }
+  // logout(): void {
+  //   this.authService.logout().subscribe(() => {
+  //     this.router.navigate(['/login']);
+  //   });
+  // }
 
   priceChange(stock: StockSummary): number {
     return stock.currentPrice - stock.previousClose;
