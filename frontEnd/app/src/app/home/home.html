@@ -1,65 +1,83 @@
-<div class="min-h-screen bg-gray-50 p-6">
-  <div class="mx-auto max-w-6xl">
-    <header class="mb-6">
-      <h1 class="text-2xl font-semibold text-gray-900">OneStocks</h1>
-      <p class="text-sm text-gray-600">Live prices refresh every 5 seconds.</p>
-    </header>
+<div class="min-h-screen bg-slate-50">
+
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-lg font-bold text-slate-900">OneStocks</h1>
+        <p class="text-xs text-slate-500">Welcome, {{ username }} · Prices live every 5 s</p>
+      </div>
+      <button
+        (click)="logout()"
+        class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 transition">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
 
     @if (lastError()) {
-      <div class="mb-4 rounded border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-800">
+      <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
         {{ lastError() }}
       </div>
     }
 
-    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Name</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Symbol</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">Current Price</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">Change</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">% Change</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">Last Updated</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          @for (stock of stocks(); track stock.id) {
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-3 text-sm text-gray-900">{{ stock.name }}</td>
-              <td class="px-4 py-3 text-sm font-medium text-gray-700">{{ stock.symbol }}</td>
-              <td class="px-4 py-3 text-right text-sm text-gray-900">
-                {{ stock.currentPrice | currency:'USD':'symbol':'1.2-2' }}
-              </td>
-              <td
-                class="px-4 py-3 text-right text-sm font-medium"
-                [class.text-green-600]="priceChange(stock) > 0"
-                [class.text-red-600]="priceChange(stock) < 0"
-                [class.text-gray-500]="priceChange(stock) === 0"
-              >
-                {{ priceChange(stock) >= 0 ? '+' : '' }}{{ priceChange(stock) | number:'1.2-2' }}
-              </td>
-              <td
-                class="px-4 py-3 text-right text-sm font-medium"
-                [class.text-green-600]="priceChange(stock) > 0"
-                [class.text-red-600]="priceChange(stock) < 0"
-                [class.text-gray-500]="priceChange(stock) === 0"
-              >
-                {{ percentChange(stock) >= 0 ? '+' : '' }}{{ percentChange(stock) | number:'1.2-2' }}%
-              </td>
-              <td class="px-4 py-3 text-right text-sm text-gray-500 tabular-nums">
-                {{ formatTime(stock.updatedAt) }}
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">
-                Loading stocks...
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <h2 class="text-xl font-semibold text-slate-900 mb-4">Top Stocks</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+      @for (stock of stocks(); track stock.id) {
+        <button
+          type="button"
+          (click)="openStock(stock.symbol)"
+          class="text-left p-4 rounded-xl bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:shadow-md transition-all duration-150 group">
+
+          <div class="flex items-start justify-between mb-3">
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              {{ stock.sector }}
+            </span>
+            <span
+              class="text-xs font-semibold tabular-nums"
+              [class.text-emerald-600]="stock.dayChangePercent >= 0"
+              [class.text-red-600]="stock.dayChangePercent < 0">
+              {{ stock.dayChangePercent >= 0 ? '▲' : '▼' }}
+              {{ stock.dayChangePercent | number:'1.2-2' }}%
+            </span>
+          </div>
+
+          <p class="text-base font-bold text-slate-900 leading-tight">{{ stock.symbol }}</p>
+          <p class="text-xs text-slate-500 truncate mb-3">{{ stock.name }}</p>
+
+          <p class="text-xl font-semibold tabular-nums text-slate-900">
+            ₹{{ fmtRupees(stock.currentPrice) }}
+          </p>
+
+          <p class="text-xs tabular-nums mt-1"
+             [class.text-emerald-600]="priceChange(stock) >= 0"
+             [class.text-red-600]="priceChange(stock) < 0">
+            {{ priceChange(stock) >= 0 ? '+' : '' }}₹{{ fmtRupees(priceChange(stock)) }} today
+          </p>
+
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs text-slate-400">{{ formatTime(stock.updatedAt) }}</span>
+            <span class="text-xs text-indigo-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              Trade →
+            </span>
+          </div>
+        </button>
+      } @empty {
+        @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+          <div class="p-4 rounded-xl bg-white ring-1 ring-slate-200 animate-pulse">
+            <div class="h-3 w-16 bg-slate-200 rounded mb-3"></div>
+            <div class="h-4 w-12 bg-slate-200 rounded mb-1"></div>
+            <div class="h-3 w-28 bg-slate-200 rounded mb-3"></div>
+            <div class="h-6 w-24 bg-slate-200 rounded"></div>
+          </div>
+        }
+      }
     </div>
-  </div>
+  </main>
+
+  @if (selectedSymbol(); as symbol) {
+    <app-stock-detail-modal [symbol]="symbol" (closed)="closeModal()" />
+  }
 </div>

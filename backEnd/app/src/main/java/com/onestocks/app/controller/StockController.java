@@ -1,25 +1,31 @@
 package com.onestocks.app.controller;
 
-import com.onestocks.app.model.Stock;
+import com.onestocks.app.dto.StockDetailResponse;
+import com.onestocks.app.dto.StockSummaryResponse;
+import com.onestocks.app.model.User;
 import com.onestocks.app.service.StockService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stocks")
+@RequiredArgsConstructor
 public class StockController {
 
     private final StockService stockService;
 
-    public StockController(StockService stockService) {
-        this.stockService = stockService;
+    @GetMapping
+    public List<StockSummaryResponse> list() {
+        return stockService.listAll();
     }
 
-    @GetMapping
-    public List<Stock> getAllStocks() {
-        return stockService.getAllStocks();
+    @GetMapping("/{symbol}")
+    public StockDetailResponse get(
+            @AuthenticationPrincipal User user,
+            @PathVariable String symbol) {
+        return stockService.getDetail(symbol.toUpperCase(), user.getId());
     }
 }
