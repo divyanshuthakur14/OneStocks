@@ -1,13 +1,14 @@
 CREATE DATABASE IF NOT EXISTS onestocks_db;
 USE onestocks_db;
- 
+
 CREATE TABLE IF NOT EXISTS users (
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
     username    VARCHAR(50)  NOT NULL UNIQUE,
     email       VARCHAR(100) NOT NULL UNIQUE,
     password    VARCHAR(255) NOT NULL,
     remember_me BOOLEAN      NOT NULL DEFAULT FALSE,
-    created_at  DATETIME     NOT NULL
+    created_at  DATETIME     NOT NULL,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE stocks (
@@ -68,7 +69,3 @@ CREATE TABLE holdings (
     CONSTRAINT fk_hold_user  FOREIGN KEY (user_id)  REFERENCES users  (id),
     CONSTRAINT fk_hold_stock FOREIGN KEY (stock_id) REFERENCES stocks (id)
 );
-
-
-
- 
