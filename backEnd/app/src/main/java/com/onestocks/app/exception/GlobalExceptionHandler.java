@@ -1,6 +1,7 @@
 package com.onestocks.app.exception;
 
 import com.onestocks.app.dto.AuthResponse;
+import com.onestocks.app.dto.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +11,24 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(404)
+                .body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTransactionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransaction(InvalidTransactionException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("INVALID_TRANSACTION", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientFunds(InsufficientFundsException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("INSUFFICIENT_FUNDS", ex.getMessage()));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<AuthResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
