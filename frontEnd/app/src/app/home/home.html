@@ -1,5 +1,65 @@
-<div class="home-container">
-  <h2>Welcome, {{ username }}! 🎉</h2>
-  <p>You are successfully logged in.</p>
-  <button (click)="logout()">Logout</button>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="mx-auto max-w-6xl">
+    <header class="mb-6">
+      <h1 class="text-2xl font-semibold text-gray-900">OneStocks</h1>
+      <p class="text-sm text-gray-600">Live prices refresh every 5 seconds.</p>
+    </header>
+
+    @if (lastError()) {
+      <div class="mb-4 rounded border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-800">
+        {{ lastError() }}
+      </div>
+    }
+
+    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Name</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Symbol</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">Current Price</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">Change</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">% Change</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">Last Updated</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          @for (stock of stocks(); track stock.id) {
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 text-sm text-gray-900">{{ stock.name }}</td>
+              <td class="px-4 py-3 text-sm font-medium text-gray-700">{{ stock.symbol }}</td>
+              <td class="px-4 py-3 text-right text-sm text-gray-900">
+                {{ stock.currentPrice | currency:'USD':'symbol':'1.2-2' }}
+              </td>
+              <td
+                class="px-4 py-3 text-right text-sm font-medium"
+                [class.text-green-600]="priceChange(stock) > 0"
+                [class.text-red-600]="priceChange(stock) < 0"
+                [class.text-gray-500]="priceChange(stock) === 0"
+              >
+                {{ priceChange(stock) >= 0 ? '+' : '' }}{{ priceChange(stock) | number:'1.2-2' }}
+              </td>
+              <td
+                class="px-4 py-3 text-right text-sm font-medium"
+                [class.text-green-600]="priceChange(stock) > 0"
+                [class.text-red-600]="priceChange(stock) < 0"
+                [class.text-gray-500]="priceChange(stock) === 0"
+              >
+                {{ percentChange(stock) >= 0 ? '+' : '' }}{{ percentChange(stock) | number:'1.2-2' }}%
+              </td>
+              <td class="px-4 py-3 text-right text-sm text-gray-500 tabular-nums">
+                {{ formatTime(stock.updatedAt) }}
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">
+                Loading stocks...
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
