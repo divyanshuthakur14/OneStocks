@@ -1,5 +1,59 @@
-<div class="home-container">
-  <h2>Welcome, {{ username }}! 🎉</h2>
-  <p>You are successfully logged in.</p>
-  <button (click)="logout()">Logout</button>
+<!--
+  TEMPORARY TEST HARNESS — delete this file's content and replace with teammate's
+  real home page when available. The <app-stock-detail-modal> usage pattern below
+  is the contract the real home page should follow.
+-->
+<div class="min-h-screen bg-slate-50">
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-lg font-bold text-slate-900">OneStocks</h1>
+        <p class="text-xs text-slate-500">Welcome, {{ username }}</p>
+      </div>
+      <button
+        (click)="logout()"
+        class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 transition">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+    <h2 class="text-xl font-semibold text-slate-900 mb-4">Top stocks</h2>
+
+    @if (stocksLoading()) {
+      <p class="text-sm text-slate-500">Loading stocks…</p>
+    } @else if (stocksError()) {
+      <p class="text-sm text-red-600">{{ stocksError() }}</p>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        @for (s of stocks(); track s.symbol) {
+          <button
+            type="button"
+            (click)="openStock(s.symbol)"
+            class="text-left p-4 rounded-xl bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:shadow-md transition">
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="font-bold text-slate-900">{{ s.symbol }}</span>
+              <span
+                class="text-xs font-semibold tabular-nums"
+                [class.text-emerald-600]="s.dayChangePercent >= 0"
+                [class.text-red-600]="s.dayChangePercent < 0">
+                {{ s.dayChangePercent >= 0 ? '+' : '' }}{{ s.dayChangePercent.toFixed(2) }}%
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 truncate">{{ s.name }}</p>
+            <p class="mt-2 text-lg font-semibold tabular-nums text-slate-900">
+              ₹{{ fmtRupees(s.currentPrice) }}
+            </p>
+          </button>
+        }
+      </div>
+    }
+  </main>
+
+  @if (selectedSymbol(); as symbol) {
+    <app-stock-detail-modal
+      [symbol]="symbol"
+      (closed)="closeModal()" />
+  }
 </div>
