@@ -32,7 +32,11 @@ build/
 ### VS Code ###
 .vscode/
 
+### Claude ###
+.claude
 ### Secrets — never commit ###
 src/main/resources/application.properties
 src/main/resources/application-*.properties
 !src/main/resources/application.properties.example
+
+.idea/
