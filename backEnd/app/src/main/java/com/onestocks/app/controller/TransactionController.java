@@ -1,6 +1,7 @@
 package com.onestocks.app.controller;
 
 import com.onestocks.app.dto.ExecuteTransactionRequest;
+import com.onestocks.app.dto.TransactionDTO;
 import com.onestocks.app.dto.TransactionResponse;
 import com.onestocks.app.model.TransactionType;
 import com.onestocks.app.model.User;
@@ -14,6 +15,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -46,4 +49,10 @@ public class TransactionController {
             @PathVariable Long id) {
         return transactionService.getTransaction(id, user.getId());
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<TransactionDTO>> getMyTransactions(@RequestParam String username) {
+        return ResponseEntity.ok(transactionService.getTransactionsForUser(username));
+    }
+
 }

@@ -30,6 +30,9 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
+  getCurrentUserId() {
+    throw new Error('Method not implemented.');
+  }
 
   private baseUrl = 'http://localhost:8082/api/auth';
 

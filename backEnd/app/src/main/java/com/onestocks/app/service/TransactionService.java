@@ -1,17 +1,15 @@
 package com.onestocks.app.service;
 
 import com.onestocks.app.dto.ExecuteTransactionRequest;
+import com.onestocks.app.dto.TransactionDTO;
 import com.onestocks.app.dto.TransactionResponse;
 import com.onestocks.app.exception.InvalidTransactionException;
 import com.onestocks.app.exception.ResourceNotFoundException;
-import com.onestocks.app.model.Holding;
-import com.onestocks.app.model.Stock;
-import com.onestocks.app.model.Transaction;
-import com.onestocks.app.model.TransactionStatus;
-import com.onestocks.app.model.TransactionType;
+import com.onestocks.app.model.*;
 import com.onestocks.app.repository.HoldingRepository;
 import com.onestocks.app.repository.StockRepository;
 import com.onestocks.app.repository.TransactionRepository;
+import com.onestocks.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,14 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class TransactionService {
 
     private final StockRepository stockRepository;
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
     private final HoldingRepository holdingRepository;
     private final WalletService walletService;
 
@@ -147,5 +148,23 @@ public class TransactionService {
                 txn.getCreatedAt(),
                 balanceAfter
         );
+    }
+
+    public List<TransactionDTO> getTransactionsForUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+
+        return transactionRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(t -> new TransactionDTO(
+                        t.getCreatedAt(),
+                        t.getStock().getName(),
+                        t.getType(),
+                        t.getStatus(),
+                        t.getQuantity(),
+                        t.getPricePerShare(),
+                        t.getTotalAmount()
+                ))
+                .toList();
     }
 }
