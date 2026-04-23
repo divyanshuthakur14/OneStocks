@@ -1,1 +1,72 @@
-<p>profile works!</p>
+<div class="min-h-screen bg-slate-50 p-6">
+
+  <!-- Page Title -->
+  <h1 class="text-xl font-semibold text-slate-800 mb-6">My Profile</h1>
+
+  <div class="flex gap-6">
+
+    <!-- LEFT COLUMN -->
+    <div class="flex flex-col gap-6 w-3/5">
+
+      <!-- Balance Card (Green box position) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <h2 class="text-sm font-medium text-slate-500 mb-1">Balance</h2>
+        <!-- balance content goes here -->
+        
+      </div>
+
+      <!-- Owned Stocks Card (Blue box position) -->
+    <!-- Owned Stocks Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col gap-4">
+    
+    <h2 class="text-sm font-medium text-slate-500">Owned Stocks</h2>
+
+    <!-- Empty state -->
+    <p *ngIf="holdings().length === 0" class="text-sm text-slate-400">
+        You don't own any stocks yet.
+    </p>
+
+    <!-- Table -->
+    <div *ngIf="holdings().length > 0" class="overflow-auto max-h-72">
+  <table class="w-full text-sm">
+    <thead class="sticky top-0 bg-white">
+      <tr class="text-left text-slate-400 border-b border-slate-100">
+        <th class="pb-3 font-medium">Stock</th>
+        <th class="pb-3 font-medium">Qty</th>
+        <th class="pb-3 font-medium">Avg Buy</th>
+        <th class="pb-3 font-medium">Current</th>
+        <th class="pb-3 font-medium">P&L</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let h of holdings()"
+          class="border-b border-slate-50 hover:bg-slate-50 transition">
+        <td class="py-3">
+          <span class="font-semibold text-slate-800">{{ h.symbol }}</span>
+          <span class="block text-xs text-slate-400">{{ h.stockName }}</span>
+        </td>
+        <td class="py-3 text-slate-600">{{ h.quantity }}</td>
+        <td class="py-3 text-slate-600">₹{{ h.averageBuyPrice | number:'1.2-2' }}</td>
+        <td class="py-3 text-slate-600">₹{{ h.currentPrice | number:'1.2-2' }}</td>
+        <td class="py-3 font-semibold"
+            [class.text-green-600]="h.profitLoss >= 0"
+            [class.text-red-500]="h.profitLoss < 0">
+          {{ h.profitLoss >= 0 ? '+' : '' }}₹{{ h.profitLoss | number:'1.2-2' }}
+          <span class="block text-xs font-normal">
+            {{ h.profitLossPercent >= 0 ? '+' : '' }}{{ h.profitLossPercent | number:'1.2-2' }}%
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+    <!-- RIGHT COLUMN - Transaction History (Red box position) -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex-1">
+      <h2 class="text-sm font-medium text-slate-500 mb-1">Transaction History</h2>
+      <!-- transaction history content goes here -->
+    </div>
+
+  </div>
+</div>
