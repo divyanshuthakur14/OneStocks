@@ -5,11 +5,24 @@
         <h1 class="text-lg font-bold text-slate-900">OneStocks</h1>
         <p class="text-xs text-slate-500">Welcome, {{ username }} · Prices live every 5 s</p>
       </div>
-      <button
-        (click)="logout()"
-        class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 transition">
-        Logout
-      </button>
+
+      <!-- Flex Box for Log out and Profile Icon -->
+      <div class="flex items-center justify-end gap-3">
+        <!-- Log out button -->
+        <button
+            (click)="logout()"
+            class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 transition">
+            Logout
+        </button>
+
+        <!-- Profile Button -->
+        <button
+            [routerLink]="['/profile']"
+            class="w-9 h-9 rounded-full bg-indigo-600 text-white text-sm font-semibold flex items-center justify-center hover:bg-indigo-700 transition"
+            [title]="username">
+            {{ userInitial }}
+        </button>
+      </div>
     </div>
   </header>
 }
