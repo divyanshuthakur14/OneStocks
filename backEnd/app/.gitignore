@@ -33,7 +33,7 @@ build/
 .vscode/
 
 ### Claude ###
-.claude
+.claude/
 ### Secrets — never commit ###
 src/main/resources/application.properties
 src/main/resources/application-*.properties
