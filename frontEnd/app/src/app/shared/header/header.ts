@@ -1,12 +1,12 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
 import { AuthService } from '../../auth';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -31,6 +31,10 @@ export class Header implements OnInit {
 
   ngOnInit(): void {
     this.username = this.authService.getUsername();
+  }
+
+  get userInitial(): string{
+    return this.username?.charAt(0).toUpperCase() ?? "P";
   }
 
   logout(): void {
