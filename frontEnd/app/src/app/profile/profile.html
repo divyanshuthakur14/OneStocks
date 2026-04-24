@@ -9,11 +9,16 @@
     <div class="flex flex-col gap-6 w-3/7">
 
       <!-- Balance Card (Green box position) -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h2 class="text-sm font-medium text-slate-500 mb-1">Balance</h2>
-        <!-- balance content goes here -->
-        
-      </div>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+    <h2 class="text-sm font-medium text-slate-500 mb-3">Balance</h2>
+
+    <p *ngIf="balance() === null" class="text-sm text-slate-400">Loading...</p>
+
+    <p *ngIf="balance() !== null"
+        class="text-3xl font-bold text-green-600">
+        ₹{{ balance() | number:'1.2-2' }}
+    </p>
+    </div>
 
       <!-- Owned Stocks Card (Blue box position) -->
     <!-- Owned Stocks Card -->

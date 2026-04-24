@@ -7,6 +7,7 @@ import { HoldingService } from '../services/holding.service';
 import { HoldingDTO } from '../models/holding.model';
 import { TransactionDTO } from '../models/transaction.model';
 import { TransactionService } from '../services/transaction.service';
+import { WalletService } from '../services/wallet.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,11 +20,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly holdingService = inject(HoldingService);
   private readonly transactionService = inject(TransactionService);
+  private readonly walletService = inject(WalletService);
+
   private readonly destroy$ = new Subject<void>();
+  
 
   username: string | null = null;
   readonly holdings = signal<HoldingDTO[]>([]);
   readonly transactions = signal<TransactionDTO[]>([]);
+  readonly balance = signal<number | null>(null);
 
   ngOnInit(): void {
     this.username = this.authService.getUsername();
@@ -42,6 +47,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.transactionService.getMyTransactions(this.username)
         .pipe(takeUntil(this.destroy$))
         .subscribe({ next: (data) => this.transactions.set(data) 
+        });
+
+        this.walletService.getBalance()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({ next: (data) => this.balance.set(data.balance) 
         });
 
     }
