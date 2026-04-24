@@ -54,7 +54,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
         .subscribe({ next: (data) => this.balance.set(data.balance) 
         });
 
+
+
     }
+  }
+
+    get totalProfitLoss() : number {
+    return this.holdings().reduce((sum, h)=>sum+h.profitLoss, 0);
+  }
+
+  get totalProfitLossPercent() : number {
+    const totalCost = this.holdings().reduce(
+      (sum, h)=>sum+ (h.averageBuyPrice + h.quantity),0
+    );
+    if(totalCost == 0) return 0;
+    return (this.totalProfitLoss / totalCost) * 100;
   }
 
   ngOnDestroy(): void {

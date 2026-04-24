@@ -29,6 +29,7 @@ public class HoldingService {
         return holdingRepository.findByUserId(user.getId())
                 .stream()
                 .map(h -> toHoldingDTO(h, h.getStock().getCurrentPrice()))
+                .sorted((a, b)->b.profitLossPercent().compareTo(a.profitLossPercent()))
                 .toList();
     }
 
