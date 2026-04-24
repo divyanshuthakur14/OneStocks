@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record TransactionDTO(
-        Instant created_at,
+        Instant createdAt,
         String stockName,
         TransactionType type,
         TransactionStatus status,
