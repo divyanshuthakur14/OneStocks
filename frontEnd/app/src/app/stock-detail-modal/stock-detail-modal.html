@@ -142,10 +142,17 @@
             <input
               type="number"
               min="1"
+              max="10000"
               [value]="quantity()"
               (input)="onQtyInput($any($event.target).value)"
-              class="flex-1 h-11 rounded-lg border border-slate-200 text-center text-lg font-semibold tabular-nums text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
-              aria-label="Quantity" />
+              class="flex-1 h-11 rounded-lg border text-center text-lg font-semibold tabular-nums text-slate-900 focus:outline-none focus:ring-2 transition"
+              [class.border-red-400]="quantityError()"
+              [class.focus:ring-red-200]="quantityError()"
+              [class.border-slate-200]="!quantityError()"
+              [class.focus:ring-indigo-200]="!quantityError()"
+              [class.focus:border-indigo-400]="!quantityError()"
+              aria-label="Quantity"
+              aria-describedby="qty-error" />
             <button
               type="button"
               (click)="changeQty(1)"
@@ -153,6 +160,10 @@
               +
             </button>
           </div>
+
+          @if (quantityError()) {
+            <p id="qty-error" class="text-xs text-red-600 mt-1.5 px-1">{{ quantityError() }}</p>
+          }
 
           <div class="flex items-center justify-between text-xs text-slate-500 mt-2 px-1">
             <span>Est. total: <span class="font-medium text-slate-700 tabular-nums">₹{{ fmtRupees(estimatedTotal()) }}</span></span>
