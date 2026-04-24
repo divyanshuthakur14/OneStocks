@@ -39,6 +39,7 @@ export class StockDetailModalComponent implements OnChanges {
   readonly actionBusy = signal<TransactionType | null>(null);
   readonly actionError = signal<string | null>(null);
   readonly actionSuccess = signal<string | null>(null);
+  readonly quantityError = signal<string | null>(null);
 
   readonly initial = computed(() => this.detail()?.name?.charAt(0).toUpperCase() ?? '?');
   readonly avatarColor = computed(() => this.colorForSector(this.detail()?.sector));
@@ -61,12 +62,13 @@ export class StockDetailModalComponent implements OnChanges {
   readonly canBuy = computed(() => {
     const d = this.detail();
     const q = this.quantity();
-    return !!d && q > 0 && this.estimatedTotal() <= d.walletBalance && !this.actionBusy();
+    return !!d && !this.quantityError() && q > 0
+        && this.estimatedTotal() <= d.walletBalance && !this.actionBusy();
   });
 
   readonly canSell = computed(() => {
     const q = this.quantity();
-    return q > 0 && q <= this.maxSellQty() && !this.actionBusy();
+    return !this.quantityError() && q > 0 && q <= this.maxSellQty() && !this.actionBusy();
   });
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -86,12 +88,20 @@ export class StockDetailModalComponent implements OnChanges {
   changeQty(delta: number): void {
     const next = Math.max(1, this.quantity() + delta);
     this.quantity.set(next);
+    this.quantityError.set(null);
     this.clearFeedback();
   }
 
   onQtyInput(value: string): void {
     const n = parseInt(value, 10);
-    this.quantity.set(Number.isNaN(n) || n < 1 ? 1 : n);
+    if (Number.isNaN(n) || n < 1) {
+      this.quantityError.set('Quantity must be a positive whole number');
+    } else if (n > 10000) {
+      this.quantityError.set('Quantity cannot exceed 10,000 per trade');
+    } else {
+      this.quantityError.set(null);
+      this.quantity.set(n);
+    }
     this.clearFeedback();
   }
 
