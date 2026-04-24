@@ -10,14 +10,33 @@
 
       <!-- Balance Card (Green box position) -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-    <h2 class="text-sm font-medium text-slate-500 mb-3">Balance</h2>
+        <h2 class="text-sm font-medium text-slate-500 mb-3">Balance</h2>
 
-    <p *ngIf="balance() === null" class="text-sm text-slate-400">Loading...</p>
+        <div class="flex items-center justify-between">
 
-    <p *ngIf="balance() !== null"
-        class="text-3xl font-bold text-green-600">
-        ₹{{ balance() | number:'1.2-2' }}
-    </p>
+            <!-- Balance -->
+            <p *ngIf="balance() === null" class="text-sm text-green-400">Loading...</p>
+            <p *ngIf="balance() !== null"
+            class="text-3xl font-bold text-slate-800">
+            ₹{{ balance() | number:'1.2-2' }}
+            </p>
+
+            <!-- Total P&L -->
+            <div *ngIf="holdings().length > 0" class="text-right">
+            <p class="text-xs text-slate-400 mb-1">Total P&L</p>
+            <p class="text-lg font-semibold"
+                [class.text-green-600]="totalProfitLoss >= 0"
+                [class.text-red-500]="totalProfitLoss < 0">
+                {{ totalProfitLoss >= 0 ? '+' : '' }}₹{{ totalProfitLoss | number:'1.2-2' }}
+            </p>
+            <p class="text-xs font-medium"
+                [class.text-green-600]="totalProfitLossPercent >= 0"
+                [class.text-red-500]="totalProfitLossPercent < 0">
+                {{ totalProfitLossPercent >= 0 ? '+' : '' }}{{ totalProfitLossPercent | number:'1.2-2' }}%
+            </p>
+            </div>
+
+        </div>
     </div>
 
       <!-- Owned Stocks Card (Blue box position) -->
