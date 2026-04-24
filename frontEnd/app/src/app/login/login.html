@@ -1,4 +1,5 @@
-<div class="login-container">
+<div class="background" style="background-color: #f8fafc; min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center;">
+<div class="login-container" style="background-color: #ffffff; padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
   <h2>Welcome Back</h2>
 
   <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
@@ -25,14 +26,15 @@
       />
     </div>
 
-    <div class="form-group checkbox-group">
+    <div class="form-group checkbox-group" (click)="$event.stopPropagation()">
       <input
         id="rememberMe"
         type="checkbox"
         [(ngModel)]="rememberMe"
         name="rememberMe"
+        (click)="$event.stopPropagation()"
       />
-      <label for="rememberMe">Remember me</label>
+      <label for="rememberMe" (click)="$event.stopPropagation()">Remember me</label>
     </div>
 
     <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
@@ -47,4 +49,5 @@
   <p class="signup-link">
     Don't have an account? <a routerLink="/signup">Sign up</a>
   </p>
+</div>
 </div>
