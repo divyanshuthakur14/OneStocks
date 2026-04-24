@@ -6,7 +6,7 @@
   <div class="flex gap-6">
 
     <!-- LEFT COLUMN -->
-    <div class="flex flex-col gap-6 w-2/4">
+    <div class="flex flex-col gap-6 w-3/7">
 
       <!-- Balance Card (Green box position) -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
@@ -31,24 +31,24 @@
   <table class="w-full text-sm">
     <thead class="sticky top-0 bg-white">
       <tr class="text-left text-slate-400 border-b border-slate-100">
-        <th class="pb-3 font-medium">Stock</th>
-        <th class="pb-3 font-medium">Qty</th>
-        <th class="pb-3 font-medium">Avg Buy</th>
-        <th class="pb-3 font-medium">Current</th>
-        <th class="pb-3 font-medium">P&L</th>
+        <th class="pb-3 text-sm font-medium">Stock</th>
+        <th class="pb-3 text-sm font-medium">Qty</th>
+        <th class="pb-3 text-sm font-medium">Avg Buy</th>
+        <th class="pb-3 text-sm font-medium">Current</th>
+        <th class="pb-3 text-sm font-medium">P&L</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let h of holdings()"
           class="border-b border-slate-50 hover:bg-slate-50 transition">
         <td class="py-3">
-          <span class="font-semibold text-slate-800">{{ h.symbol }}</span>
+          <span class="font-semibold text-xs text-slate-800">{{ h.symbol }}</span>
           <span class="block text-xs text-slate-400">{{ h.stockName }}</span>
         </td>
-        <td class="py-3 text-slate-600">{{ h.quantity }}</td>
-        <td class="py-3 text-slate-600">₹{{ h.averageBuyPrice | number:'1.2-2' }}</td>
-        <td class="py-3 text-slate-600">₹{{ h.currentPrice | number:'1.2-2' }}</td>
-        <td class="py-3 font-semibold"
+        <td class="py-3 text-xs text-slate-600">{{ h.quantity }}</td>
+        <td class="py-3 text-xs text-slate-600">₹{{ h.averageBuyPrice | number:'1.2-2' }}</td>
+        <td class="py-3 text-xs text-slate-600">₹{{ h.currentPrice | number:'1.2-2' }}</td>
+        <td class="py-3 text-xs font-semibold"
             [class.text-green-600]="h.profitLoss >= 0"
             [class.text-red-500]="h.profitLoss < 0">
           {{ h.profitLoss >= 0 ? '+' : '' }}₹{{ h.profitLoss | number:'1.2-2' }}
@@ -74,21 +74,21 @@
         <table class="w-full text-sm">
         <thead class="sticky top-0 bg-white">
             <tr class="text-left text-slate-400 border-b border-slate-100">
-            <th class="pb-3 font-medium">Stock</th>
-            <th class="pb-3 font-medium">Type</th>
-            <th class="pb-3 font-medium">Qty</th>
-            <th class="pb-3 font-medium">Price</th>
-            <th class="pb-3 font-medium">Total</th>
-            <th class="pb-3 font-medium">Status</th>
-            <th class="pb-3 font-medium">Date</th>
+            <th class="pb-3 text-sm font-medium">Stock</th>
+            <th class="pb-3 text-sm font-medium">Type</th>
+            <th class="pb-3 text-sm font-medium">Qty</th>
+            <th class="pb-3 text-sm font-medium">Price</th>
+            <th class="pb-3 text-sm font-medium">Total</th>
+            <th class="pb-3 text-sm font-medium">Status</th>
+            <th class="pb-3 text-sm font-medium">Date</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let t of transactions()"
                 class="border-b border-slate-50 hover:bg-slate-50 transition">
-            <td class="py-3 font-medium text-slate-800">{{ t.stockName }}</td>
+            <td class="py-3 text-xs font-medium text-slate-800">{{ t.stockName }}</td>
             <td class="py-3">
-                <span class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                <span class="px-2 py-0.5 rounded-full text-[0.65rem] font-semibold"
                     [class.bg-green-100]="t.type === 'BUY'"
                     [class.text-green-700]="t.type === 'BUY'"
                     [class.bg-red-100]="t.type === 'SELL'"
@@ -96,11 +96,11 @@
                 {{ t.type }}
                 </span>
             </td>
-            <td class="py-3 text-slate-600">{{ t.quantity }}</td>
-            <td class="py-3 text-slate-600">₹{{ t.pricePerShare | number:'1.2-2' }}</td>
-            <td class="py-3 text-slate-600">₹{{ t.totalAmount | number:'1.2-2' }}</td>
+            <td class="py-3 text-xs text-slate-600">{{ t.quantity }}</td>
+            <td class="py-3 text-xs text-slate-600">₹{{ t.pricePerShare | number:'1.2-2' }}</td>
+            <td class="py-3 text-xs text-slate-600">₹{{ t.totalAmount | number:'1.2-2' }}</td>
             <td class="py-3">
-                <span class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                <span class="px-2 py-0.5 rounded-full text-[0.65rem] font-semibold"
                     [class.bg-slate-100]="t.status === 'EXECUTED'"
                     [class.text-slate-600]="t.status === 'EXECUTED'"
                     [class.bg-red-100]="t.status === 'FAILED'"
@@ -108,7 +108,7 @@
                 {{ t.status }}
                 </span>
             </td>
-            <td class="py-3 text-slate-400 text-xs">
+            <td class="py-3 text-xs text-slate-400 text-xs">
                 {{ t.createdAt | date:'dd MMM yyyy, HH:mm' }}
             </td>
             </tr>

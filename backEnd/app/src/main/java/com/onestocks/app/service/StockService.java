@@ -74,7 +74,7 @@ public class StockService {
             BigDecimal oldPrice = stock.getCurrentPrice();
             if (oldPrice == null) continue;
 
-            double fluctuationPercent = random.nextDouble(-0.05, 0.06);
+            double fluctuationPercent = random.nextDouble(-0.005, 0.005);
             BigDecimal newPrice = oldPrice
                     .add(oldPrice.multiply(BigDecimal.valueOf(fluctuationPercent)))
                     .max(BigDecimal.ZERO)

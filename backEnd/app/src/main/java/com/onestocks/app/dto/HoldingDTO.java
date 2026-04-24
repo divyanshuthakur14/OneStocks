@@ -6,7 +6,7 @@ public record HoldingDTO(
         String symbol,
         String stockName,
         int quantity,
-        BigDecimal averagePrice,
+        BigDecimal averageBuyPrice,
         BigDecimal currentPrice,
         BigDecimal currentValue,
         BigDecimal profitLoss,
