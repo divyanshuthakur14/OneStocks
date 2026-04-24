@@ -1,54 +1,58 @@
-<div style="background-color: #f8fafc; min-height: 100vh; overflow-y: hidden; width: 100%;  align-items: center; display: flex; justify-content: center;">
-<div class="signup-container" style="background-color: #ffffff; border-radius: 12px; padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+<div style="background-color: #ffffff; min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 1rem 0;">
+<div class="signup-container" style="background-color: rgba(248, 250, 252, 0.5); border-radius: 12px; padding: 2rem; width: 100%; max-width: 720px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
   <h2>Create an Account</h2>
 
   <form (ngSubmit)="onSubmit()" #signupForm="ngForm">
 
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input
-        id="username"
-        type="text"
-        [(ngModel)]="username"
-        name="username"
-        placeholder="Enter your username"
-      />
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="username"
+          name="username"
+          placeholder="Enter your username"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Enter your password"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Confirm your password"
+        />
+      </div>
+
     </div>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        [(ngModel)]="email"
-        name="email"
-        placeholder="Enter your email"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        placeholder="Enter your password"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="confirmPassword">Confirm Password</label>
-      <input
-        id="confirmPassword"
-        type="password"
-        [(ngModel)]="confirmPassword"
-        name="confirmPassword"
-        placeholder="Confirm your password"
-      />
-    </div>
-
-    <div class="form-group checkbox-group">
+    <div class="form-group checkbox-group" style="margin-top: 0.5rem;">
       <input
         id="rememberMe"
         type="checkbox"
@@ -58,12 +62,16 @@
       <label for="rememberMe">Remember me</label>
     </div>
 
-    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
-    <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+@if (errorMessage()) {
+  <p class="error-message">{{ errorMessage() }}</p>
+}
+@if (successMessage()) {
+  <p class="success-message">{{ successMessage() }}</p>
+}
 
-    <button type="submit" [disabled]="isLoading">
-      {{ isLoading ? 'Signing up...' : 'Sign Up' }}
-    </button>
+<button type="submit" [disabled]="isLoading()">
+  {{ isLoading() ? 'Signing up...' : 'Sign Up' }}
+</button>
 
   </form>
 

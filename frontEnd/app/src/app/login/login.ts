@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,43 +12,43 @@ import { AuthService } from '../auth';
   styleUrl: './login.css'
 })
 export class LoginComponent {
-  email = '';
+  identifier = '';
   password = '';
   rememberMe = false;
-  errorMessage = '';
-  successMessage = '';
-  isLoading = false;
+  readonly errorMessage = signal('');
+  readonly successMessage = signal('');
+  readonly isLoading = signal(false);
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.errorMessage.set('');
+    this.successMessage.set('');
 
-    if (!this.email || !this.password) {
-      this.errorMessage = 'All fields are required.';
+    if (!this.identifier || !this.password) {
+      this.errorMessage.set('All fields are required.');
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.authService.login({
-      email: this.email,
+      identifier: this.identifier,
       password: this.password,
       rememberMe: this.rememberMe
     }).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         if (response.success) {
-          this.successMessage = `Welcome back, ${response.username}! Redirecting...`;
+          this.successMessage.set(`Welcome back, ${response.username}! Redirecting...`);
           setTimeout(() => this.router.navigate(['/home']), 1500);
         } else {
-          this.errorMessage = response.message;
+          this.errorMessage.set(response.message || 'Invalid credentials. Please try again.');
         }
       },
       error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Something went wrong. Please try again.';
+        this.isLoading.set(false);
+        this.errorMessage.set(err.error?.message || 'Invalid credentials. Please try again.');
       }
     });
   }

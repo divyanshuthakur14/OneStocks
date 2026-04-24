@@ -24,11 +24,11 @@ public class AuthController {
         return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
-        return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(401).body(response);
-    }
+@PostMapping("/login")
+public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    AuthResponse response = authService.login(request);
+    return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
+}
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshRequest request) {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,27 +17,27 @@ export class SignupComponent {
   password = '';
   confirmPassword = '';
   rememberMe = false;
-  errorMessage = '';
-  successMessage = '';
-  isLoading = false;
+  readonly errorMessage = signal('');
+  readonly successMessage = signal('');
+  readonly isLoading = signal(false);
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.errorMessage.set('');
+    this.successMessage.set('');
 
     if (!this.username || !this.email || !this.password || !this.confirmPassword) {
-      this.errorMessage = 'All fields are required.';
+      this.errorMessage.set('All fields are required.');
       return;
     }
 
     if (this.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
+      this.errorMessage.set('Passwords do not match.');
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.authService.signup({
       username: this.username,
@@ -47,17 +47,17 @@ export class SignupComponent {
       rememberMe: this.rememberMe
     }).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         if (response.success) {
-          this.successMessage = 'Account created! Redirecting to login...';
+          this.successMessage.set('Account created! Redirecting to login...');
           setTimeout(() => this.router.navigate(['/login']), 1500);
         } else {
-          this.errorMessage = response.message;
+          this.errorMessage.set(response.message || 'Something went wrong. Please try again.');
         }
       },
       error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Something went wrong. Please try again.';
+        this.isLoading.set(false);
+        this.errorMessage.set(err.error?.message || 'Something went wrong. Please try again.');
       }
     });
   }

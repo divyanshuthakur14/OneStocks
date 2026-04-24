@@ -59,26 +59,29 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+public AuthResponse login(LoginRequest request) {
+    String identifier = request.getIdentifier();
 
-        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return AuthResponse.builder().success(false).message("Invalid email or password").build();
-        }
+    User user = userRepository.findByEmail(identifier)
+            .orElseGet(() -> userRepository.findByUsername(identifier).orElse(null));
 
-        String accessToken = jwtService.generateToken(user);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-
-        return AuthResponse.builder()
-                .success(true)
-                .message("Login successful")
-                .token(accessToken)
-                .refreshToken(refreshToken.getToken())
-                .username(user.getDisplayName())
-                .email(user.getEmail())
-                .role(user.getRole().name())
-                .build();
+    if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        return AuthResponse.builder().success(false).message("Invalid credentials").build();
     }
+
+    String accessToken = jwtService.generateToken(user);
+    RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+    return AuthResponse.builder()
+            .success(true)
+            .message("Login successful")
+            .token(accessToken)
+            .refreshToken(refreshToken.getToken())
+            .username(user.getDisplayName())
+            .email(user.getEmail())
+            .role(user.getRole().name())
+            .build();
+}
 
     public AuthResponse refresh(RefreshRequest request) {
         RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken())
