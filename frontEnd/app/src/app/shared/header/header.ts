@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
@@ -14,6 +14,7 @@ export class Header implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
@@ -27,14 +28,22 @@ export class Header implements OnInit {
     return !url.includes('/login') && !url.includes('/signup');
   });
 
-  username: string | null = '';
+  readonly username = signal<string | null>(null);
+
+  constructor() {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.username.set(this.authService.getUsername());
+    });
+  }
 
   ngOnInit(): void {
-    this.username = this.authService.getUsername();
+    this.username.set(this.authService.getUsername());
   }
 
   get userInitial(): string{
-    return this.username?.charAt(0).toUpperCase() ?? "P";
+    return this.username()?.charAt(0).toUpperCase() ?? "P";
   }
 
   logout(): void {
