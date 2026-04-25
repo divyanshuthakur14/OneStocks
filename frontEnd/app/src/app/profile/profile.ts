@@ -8,11 +8,12 @@ import { HoldingDTO } from '../models/holding.model';
 import { TransactionDTO } from '../models/transaction.model';
 import { TransactionService } from '../services/transaction.service';
 import { WalletService } from '../services/wallet.service';
+import { StockDetailModalComponent } from '../stock-detail-modal/stock-detail-modal';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, StockDetailModalComponent],
   templateUrl: './profile.html',
   styleUrl: './profile.css'
 })
@@ -26,6 +27,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
 
   username: string | null = null;
+  readonly selectedSymbol = signal<string | null>(null);
   readonly holdings = signal<HoldingDTO[]>([]);
   readonly transactions = signal<TransactionDTO[]>([]);
   readonly balance = signal<number | null>(null);
@@ -57,6 +59,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
     }
+  }
+
+    openStock(symbol: string): void {
+    this.selectedSymbol.set(symbol);
+  }
+
+  closeModal(): void {
+    this.selectedSymbol.set(null);
   }
 
     get totalProfitLoss() : number {
