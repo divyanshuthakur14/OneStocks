@@ -18,6 +18,7 @@ import {
   TransactionType
 } from '../stock.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TransactionEventService } from '../services/transaction-event.service';
 
 @Component({
   selector: 'app-stock-detail-modal',
@@ -31,6 +32,7 @@ export class StockDetailModalComponent implements OnChanges {
   @Output() closed = new EventEmitter<void>();
 
   private readonly stockService = inject(StockService);
+  private readonly transactionEventService = inject(TransactionEventService);
 
   readonly loading = signal(false);
   readonly loadError = signal<string | null>(null);
@@ -135,6 +137,7 @@ export class StockDetailModalComponent implements OnChanges {
           );
           this.quantity.set(1);
           this.load(false);
+          this.transactionEventService.emit();
         },
         error: (err: HttpErrorResponse) => {
           this.actionBusy.set(null);
