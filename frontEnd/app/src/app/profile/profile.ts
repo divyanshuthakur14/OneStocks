@@ -9,6 +9,7 @@ import { TransactionDTO } from '../models/transaction.model';
 import { TransactionService } from '../services/transaction.service';
 import { WalletService } from '../services/wallet.service';
 import { StockDetailModalComponent } from '../stock-detail-modal/stock-detail-modal';
+import { TransactionEventService } from '../services/transaction-event.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +23,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private readonly holdingService = inject(HoldingService);
   private readonly transactionService = inject(TransactionService);
   private readonly walletService = inject(WalletService);
+  private readonly transactionEventService = inject(TransactionEventService);
 
   private readonly destroy$ = new Subject<void>();
   
@@ -56,6 +58,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
         .subscribe({ next: (data) => this.balance.set(data.balance) 
         });
 
+        this.fetchTransactions();
+        this.fetchBalance();
+
+        this.transactionEventService.transactionCompleted
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(() => {
+            this.fetchHoldings();
+            this.fetchTransactions();
+            this.fetchBalance();
+          });
 
 
     }
@@ -71,6 +83,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     get totalProfitLoss() : number {
     return this.holdings().reduce((sum, h)=>sum+h.profitLoss, 0);
+  }
+
+    private fetchHoldings(): void {
+    this.holdingService.getMyHoldings(this.username!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: (data) => this.holdings.set(data) });
+  }
+
+  private fetchTransactions(): void {
+    this.transactionService.getMyTransactions(this.username!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: (data) => this.transactions.set(data) });
+  }
+
+  private fetchBalance(): void {
+    this.walletService.getBalance()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: (data) => this.balance.set(data.balance) });
   }
 
   get totalProfitLossPercent() : number {
