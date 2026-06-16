@@ -6,7 +6,6 @@ import com.onestocks.app.model.Holding;
 import com.onestocks.app.model.User;
 import com.onestocks.app.repository.HoldingRepository;
 import com.onestocks.app.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-//@Transactional(readOnly = true)
 public class HoldingService {
 
     private final HoldingRepository holdingRepository;

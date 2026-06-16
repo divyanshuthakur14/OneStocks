@@ -6,8 +6,11 @@ import com.onestocks.app.dto.LogoutRequest;
 import com.onestocks.app.dto.RefreshRequest;
 import com.onestocks.app.dto.SignupRequest;
 import com.onestocks.app.service.AuthService;
+
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +27,11 @@ public class AuthController {
         return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
     }
 
-@PostMapping("/login")
-public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-    AuthResponse response = authService.login(request);
-    return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
-}
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        AuthResponse response = authService.login(request);
+        return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
+    }
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshRequest request) {
@@ -41,4 +44,5 @@ public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest reque
         AuthResponse response = authService.logout(request);
         return ResponseEntity.ok(response);
     }
+    
 }

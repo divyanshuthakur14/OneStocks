@@ -10,12 +10,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(
-        name = "holdings",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_holdings_user_stock",
-                columnNames = {"user_id", "stock_id"}
-        )
+@Table(name = "holdings", uniqueConstraints = @UniqueConstraint(name = "uk_holdings_user_stock", columnNames = {"user_id", "stock_id"})
 )
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -38,4 +33,5 @@ public class Holding {
 
     @Column(name = "average_buy_price", nullable = false, precision = 19, scale = 4)
     private BigDecimal averageBuyPrice;
+
 }

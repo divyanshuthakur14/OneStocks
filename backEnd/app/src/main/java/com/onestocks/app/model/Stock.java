@@ -46,4 +46,5 @@ public class Stock {
     void touchUpdatedAt() {
         this.updatedAt = Instant.now();
     }
+    
 }

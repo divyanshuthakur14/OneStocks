@@ -1,6 +1,7 @@
 package com.onestocks.app.security;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -34,11 +35,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
-                // Admin only endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

@@ -3,6 +3,7 @@ package com.onestocks.app.dto;
 import java.math.BigDecimal;
 
 public record HoldingDTO(
+
         String symbol,
         String stockName,
         int quantity,
@@ -11,4 +12,5 @@ public record HoldingDTO(
         BigDecimal currentValue,
         BigDecimal profitLoss,
         BigDecimal profitLossPercent
+        
 ) {}

@@ -11,13 +11,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "transactions", indexes = {
-        @Index(name = "idx_tx_user_created", columnList = "user_id, created_at"),
-        @Index(name = "idx_tx_stock",        columnList = "stock_id"),
-        @Index(name = "idx_tx_created",      columnList = "created_at")
-})
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Table(name = "transactions", indexes = {@Index(name = "idx_tx_user_created", columnList = "user_id, created_at"), @Index(name = "idx_tx_stock", columnList = "stock_id"), @Index(name = "idx_tx_created", columnList = "created_at")})
+@Getter 
+@Setter
+@NoArgsConstructor 
+@AllArgsConstructor
 @Builder
 public class Transaction {
 
@@ -58,4 +56,5 @@ public class Transaction {
             this.createdAt = Instant.now();
         }
     }
+
 }

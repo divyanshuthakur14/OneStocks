@@ -21,7 +21,6 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    // Create a new refresh token for a user
     @Transactional
     public RefreshToken createRefreshToken(User user) {
         refreshTokenRepository.deleteByUser(user);
@@ -37,7 +36,6 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    // Validate refresh token
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
@@ -50,7 +48,6 @@ public class RefreshTokenService {
         return token.isRevoked();
     }
 
-    // Revoke refresh token on logout
     @Transactional
     public void revokeByUser(User user) {
         refreshTokenRepository.deleteByUser(user);

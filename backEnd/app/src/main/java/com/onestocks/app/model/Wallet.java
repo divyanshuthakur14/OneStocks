@@ -11,15 +11,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(
-        name = "wallets",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_wallets_user",
-                columnNames = "user_id"
-        )
-)
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Table(name = "wallets", uniqueConstraints = @UniqueConstraint(name = "uk_wallets_user", columnNames = "user_id"))
+@Getter 
+@Setter
+@NoArgsConstructor 
+@AllArgsConstructor
 @Builder
 public class Wallet {
 
@@ -41,4 +37,5 @@ public class Wallet {
     void touchUpdatedAt() {
         this.updatedAt = Instant.now();
     }
+    
 }

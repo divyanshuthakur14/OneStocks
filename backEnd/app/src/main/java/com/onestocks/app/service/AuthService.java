@@ -6,7 +6,6 @@ import com.onestocks.app.dto.LogoutRequest;
 import com.onestocks.app.dto.RefreshRequest;
 import com.onestocks.app.dto.SignupRequest;
 import com.onestocks.app.model.RefreshToken;
-import com.onestocks.app.model.Role;
 import com.onestocks.app.model.User;
 import com.onestocks.app.repository.UserRepository;
 import com.onestocks.app.security.JwtService;
@@ -25,6 +24,7 @@ public class AuthService {
     private final TokenBlacklistService tokenBlacklistService;
 
     public AuthResponse signup(SignupRequest request) {
+        
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             return AuthResponse.builder().success(false).message("Passwords do not match").build();
         }
@@ -39,8 +39,6 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .rememberMe(request.isRememberMe())
-                .role(Role.USER)
                 .build();
 
         userRepository.save(user);
@@ -55,35 +53,35 @@ public class AuthService {
                 .refreshToken(refreshToken.getToken())
                 .username(user.getDisplayName())
                 .email(user.getEmail())
-                .role(user.getRole().name())
+                .build();
+
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        String identifier = request.getIdentifier();
+
+        User user = userRepository.findByEmail(identifier)
+                .orElseGet(() -> userRepository.findByUsername(identifier).orElse(null));
+
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return AuthResponse.builder().success(false).message("Invalid credentials").build();
+        }
+
+        String accessToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        return AuthResponse.builder()
+                .success(true)
+                .message("Login successful")
+                .token(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .username(user.getDisplayName())
+                .email(user.getEmail())
                 .build();
     }
 
-public AuthResponse login(LoginRequest request) {
-    String identifier = request.getIdentifier();
-
-    User user = userRepository.findByEmail(identifier)
-            .orElseGet(() -> userRepository.findByUsername(identifier).orElse(null));
-
-    if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-        return AuthResponse.builder().success(false).message("Invalid credentials").build();
-    }
-
-    String accessToken = jwtService.generateToken(user);
-    RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-
-    return AuthResponse.builder()
-            .success(true)
-            .message("Login successful")
-            .token(accessToken)
-            .refreshToken(refreshToken.getToken())
-            .username(user.getDisplayName())
-            .email(user.getEmail())
-            .role(user.getRole().name())
-            .build();
-}
-
     public AuthResponse refresh(RefreshRequest request) {
+
         RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken())
                 .orElse(null);
 
@@ -107,15 +105,14 @@ public AuthResponse login(LoginRequest request) {
                 .refreshToken(refreshToken.getToken())
                 .username(user.getDisplayName())
                 .email(user.getEmail())
-                .role(user.getRole().name())
                 .build();
+
     }
 
     public AuthResponse logout(LogoutRequest request) {
-        // Blacklist the access token
+
         tokenBlacklistService.blacklist(request.getToken());
 
-        // Revoke the refresh token
         User user = userRepository.findByEmail(
                 jwtService.extractUsername(request.getToken())
         ).orElse(null);
@@ -129,4 +126,5 @@ public AuthResponse login(LoginRequest request) {
                 .message("Logged out successfully")
                 .build();
     }
+
 }

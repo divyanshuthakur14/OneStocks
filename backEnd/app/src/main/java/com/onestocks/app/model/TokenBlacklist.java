@@ -25,4 +25,5 @@ public class TokenBlacklist {
 
     @Column(nullable = false)
     private Instant blacklistedAt;
+    
 }

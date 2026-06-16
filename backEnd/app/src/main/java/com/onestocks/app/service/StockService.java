@@ -60,8 +60,6 @@ public class StockService {
         );
     }
 
-    // Simulates realistic market fluctuation — runs every 5 seconds.
-    // previousClose is set to the price before each update so day-change % stays meaningful.
     @Scheduled(fixedRate = 5000)
     public void simulatePriceUpdates() {
         List<Stock> stocks = stockRepository.findAll();

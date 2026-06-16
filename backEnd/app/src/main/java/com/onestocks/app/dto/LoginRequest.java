@@ -1,6 +1,5 @@
 package com.onestocks.app.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -13,5 +12,4 @@ public class LoginRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
-    private boolean rememberMe;
 }

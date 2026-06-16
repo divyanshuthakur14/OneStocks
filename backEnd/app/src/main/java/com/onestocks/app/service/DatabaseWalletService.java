@@ -57,4 +57,5 @@ public class DatabaseWalletService implements WalletService {
                 .build();
         return walletRepository.save(wallet);
     }
+    
 }

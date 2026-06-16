@@ -12,8 +12,7 @@ import java.time.Instant;
 public class TokenBlacklistService {
 
     private final TokenBlacklistRepository tokenBlacklistRepository;
-
-    // Blacklist a token when user logs out
+    
     public void blacklist(String token) {
         if (!tokenBlacklistRepository.existsByToken(token)) {
             TokenBlacklist entry = TokenBlacklist.builder()
@@ -24,7 +23,6 @@ public class TokenBlacklistService {
         }
     }
 
-    // Check if a token has been blacklisted
     public boolean isBlacklisted(String token) {
         return tokenBlacklistRepository.existsByToken(token);
     }
