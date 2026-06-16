@@ -7,13 +7,11 @@ export interface SignupRequest {
   email: string;
   password: string;
   confirmPassword: string;
-  rememberMe: boolean;
 }
 
 export interface LoginRequest {
   identifier: string;
   password: string;
-  rememberMe: boolean;
 }
 
 export interface AuthResponse {
@@ -23,12 +21,12 @@ export interface AuthResponse {
   refreshToken: string;
   username: string;
   email: string;
-  role: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
   getCurrentUserId() {
     throw new Error('Method not implemented.');
@@ -76,7 +74,6 @@ export class AuthService {
     localStorage.setItem('refreshToken', response.refreshToken);
     localStorage.setItem('username', response.username);
     localStorage.setItem('email', response.email);
-    localStorage.setItem('role', response.role);
   }
 
   clearSession(): void {
@@ -84,13 +81,11 @@ export class AuthService {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('username');
     localStorage.removeItem('email');
-    localStorage.removeItem('role');
   }
 
   getToken(): string | null { return localStorage.getItem('token'); }
   getRefreshToken(): string | null { return localStorage.getItem('refreshToken'); }
   getUsername(): string | null { return localStorage.getItem('username'); }
-  getRole(): string | null { return localStorage.getItem('role'); }
   isLoggedIn(): boolean { return !!this.getToken(); }
-  isAdmin(): boolean { return this.getRole() === 'ADMIN'; }
+  
 }

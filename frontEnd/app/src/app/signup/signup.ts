@@ -11,12 +11,12 @@ import { AuthService } from '../auth';
   templateUrl: './signup.html',
   styleUrl: './signup.css'
 })
+
 export class SignupComponent {
   username = '';
   email = '';
   password = '';
   confirmPassword = '';
-  rememberMe = false;
   readonly errorMessage = signal('');
   readonly successMessage = signal('');
   readonly isLoading = signal(false);
@@ -43,8 +43,7 @@ export class SignupComponent {
       username: this.username,
       email: this.email,
       password: this.password,
-      confirmPassword: this.confirmPassword,
-      rememberMe: this.rememberMe
+      confirmPassword: this.confirmPassword
     }).subscribe({
       next: (response) => {
         this.isLoading.set(false);

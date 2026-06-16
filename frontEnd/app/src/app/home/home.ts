@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Router } from '@angular/router';
 import { Subject, Subscription, timer } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../auth';
@@ -15,9 +14,9 @@ import { StockDetailModalComponent } from '../stock-detail-modal/stock-detail-mo
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
+
 export class HomeComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly stockService = inject(StockService);
   private readonly destroy$ = new Subject<void>();
   private pollSubscription?: Subscription;
@@ -59,12 +58,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.selectedSymbol.set(null);
   }
-
-  // logout(): void {
-  //   this.authService.logout().subscribe(() => {
-  //     this.router.navigate(['/login']);
-  //   });
-  // }
 
   priceChange(stock: StockSummary): number {
     return stock.currentPrice - stock.previousClose;

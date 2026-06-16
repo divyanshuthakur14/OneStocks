@@ -4,10 +4,8 @@
 
   <div class="flex gap-6" style="height: calc(100vh - 120px)">
 
-    <!-- LEFT COLUMN -->
     <div class="flex flex-col gap-6 w-3/7">
 
-      <!-- Balance Card -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 shrink-0">
         <h2 class="text-sm font-medium text-slate-500 mb-3">Balance</h2>
         <div class="flex items-center justify-between">
@@ -31,7 +29,6 @@
         </div>
       </div>
 
-      <!-- Owned Stocks Card - flex-1 to fill remaining height -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col flex-1 min-h-0">
         <h2 class="text-sm font-medium text-slate-500 mb-4">Owned Stocks</h2>
 
@@ -39,7 +36,6 @@
           You don't own any stocks yet.
         </p>
 
-        <!-- overflow-auto flex-1 min-h-0 — critical for scroll inside flex child -->
         <div *ngIf="holdings().length > 0" class="overflow-auto flex-1 min-h-0">
           <table class="w-full text-sm">
             <thead class="sticky top-0 bg-white">
@@ -78,7 +74,6 @@
 
     </div>
 
-    <!-- RIGHT COLUMN — no self-start, stretches to full height -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex-1 flex flex-col min-h-0">
       <h2 class="text-sm font-medium text-slate-500 mb-4">Transaction History</h2>
 
@@ -130,6 +125,24 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div *ngIf="totalPages() > 1" class="flex items-center justify-between pt-4 border-t border-slate-100 mt-2 shrink-0">
+        <span class="text-xs text-slate-400">
+          Page {{ currentPage() + 1 }} of {{ totalPages() }} &nbsp;·&nbsp; {{ totalElements() }} total
+        </span>
+        <div class="flex gap-2">
+          <button (click)="prevPage()"
+                  [disabled]="currentPage() === 0"
+                  class="px-3 py-1 text-xs rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
+            Previous
+          </button>
+          <button (click)="nextPage()"
+                  [disabled]="currentPage() === totalPages() - 1"
+                  class="px-3 py-1 text-xs rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
+            Next
+          </button>
+        </div>
       </div>
     </div>
 

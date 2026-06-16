@@ -24,9 +24,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private readonly transactionService = inject(TransactionService);
   private readonly walletService = inject(WalletService);
   private readonly transactionEventService = inject(TransactionEventService);
-
   private readonly destroy$ = new Subject<void>();
-  
 
   username: string | null = null;
   readonly selectedSymbol = signal<string | null>(null);
@@ -34,9 +32,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   readonly transactions = signal<TransactionDTO[]>([]);
   readonly balance = signal<number | null>(null);
 
+  readonly currentPage = signal<number>(0);
+  readonly totalPages = signal<number>(0);
+  readonly totalElements = signal<number>(0);
+  readonly pageSize = 10;
+
   ngOnInit(): void {
     this.username = this.authService.getUsername();
-
     if (this.username) {
       timer(0, 5000)
         .pipe(
@@ -48,32 +50,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
           error: () => console.error('Failed to fetch holdings')
         });
 
-        this.transactionService.getMyTransactions(this.username)
+      this.fetchTransactions();
+      this.fetchBalance();
+
+      this.transactionEventService.transactionCompleted
         .pipe(takeUntil(this.destroy$))
-        .subscribe({ next: (data) => this.transactions.set(data) 
+        .subscribe(() => {
+          this.fetchHoldings();
+          this.fetchTransactions();
+          this.fetchBalance();
         });
-
-        this.walletService.getBalance()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({ next: (data) => this.balance.set(data.balance) 
-        });
-
-        this.fetchTransactions();
-        this.fetchBalance();
-
-        this.transactionEventService.transactionCompleted
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(() => {
-            this.fetchHoldings();
-            this.fetchTransactions();
-            this.fetchBalance();
-          });
-
-
     }
   }
 
-    openStock(symbol: string): void {
+  openStock(symbol: string): void {
     this.selectedSymbol.set(symbol);
   }
 
@@ -81,34 +71,54 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.selectedSymbol.set(null);
   }
 
-    get totalProfitLoss() : number {
-    return this.holdings().reduce((sum, h)=>sum+h.profitLoss, 0);
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages() - 1) {
+      this.currentPage.set(this.currentPage() + 1);
+      this.fetchTransactions();
+    }
   }
 
-    private fetchHoldings(): void {
+  prevPage(): void {
+    if (this.currentPage() > 0) {
+      this.currentPage.set(this.currentPage() - 1);
+      this.fetchTransactions();
+    }
+  }
+
+  get totalProfitLoss(): number {
+    return this.holdings().reduce((sum, h) => sum + h.profitLoss, 0);
+  }
+
+  get totalProfitLossPercent(): number {
+    const totalCost = this.holdings().reduce(
+      (sum, h) => sum + (h.averageBuyPrice * h.quantity), 0
+    );
+    if (totalCost === 0) return 0;
+    return (this.totalProfitLoss / totalCost) * 100;
+  }
+
+  private fetchHoldings(): void {
     this.holdingService.getMyHoldings(this.username!)
       .pipe(takeUntil(this.destroy$))
       .subscribe({ next: (data) => this.holdings.set(data) });
   }
 
-  private fetchTransactions(): void {
-    this.transactionService.getMyTransactions(this.username!)
+  fetchTransactions(): void {
+    this.transactionService.getTransactions(this.currentPage(), this.pageSize)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({ next: (data) => this.transactions.set(data) });
+      .subscribe({
+        next: (page) => {
+          this.transactions.set(page.content);
+          this.totalPages.set(page.totalPages);
+          this.totalElements.set(page.totalElements);
+        }
+      });
   }
 
   private fetchBalance(): void {
     this.walletService.getBalance()
       .pipe(takeUntil(this.destroy$))
       .subscribe({ next: (data) => this.balance.set(data.balance) });
-  }
-
-  get totalProfitLossPercent() : number {
-    const totalCost = this.holdings().reduce(
-      (sum, h)=>sum+ (h.averageBuyPrice + h.quantity),0
-    );
-    if(totalCost == 0) return 0;
-    return (this.totalProfitLoss / totalCost) * 100;
   }
 
   ngOnDestroy(): void {

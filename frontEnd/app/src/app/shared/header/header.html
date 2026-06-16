@@ -5,32 +5,22 @@
         <button [routerLink] = "['/home']"
             class="px-3 py-1.5 text-sm rounded-lg hover:bg-slate-50 transition text-left">
             <div>
-                <!-- <h1 class="text-lg font-bold text-slate-900">OneStocks</h1> -->
+
                 <img src="Assets/OneStocks_F.png"  class="w-40" />
                 <p class="text-xs text-slate-500 -mt-5.5 ml-13">Welcome, {{ username() }}! </p>
-                <!-- · -->
+
             </div>
         </button>
       </div>
 
-      
-      <!-- Flex Box for Log out and Profile Icon -->
       <div class="flex items-center justify-end gap-3">
 
-        <!-- Home Router -->
-        <!-- <button [routerLink] = "['/home']"
-            routerLinkActive = "text-slate-200"
-            class="px-3 py-1.5 mr-12 text-slate-600 transition duration-300 ease-in-out text-sm hover:text-slate-400 ">
-            Home
-        </button>  -->
-        <!-- Log out button -->
         <button
             (click)="logout()"
             class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 transition">
             Logout
         </button>
 
-        <!-- Profile Button -->
         <button
             [routerLink]="['/profile']"
             class="w-9 h-9 rounded-full bg-indigo-600 text-white text-sm font-semibold flex items-center justify-center hover:bg-indigo-700 transition"

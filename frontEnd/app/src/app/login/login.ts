@@ -14,7 +14,6 @@ import { AuthService } from '../auth';
 export class LoginComponent {
   identifier = '';
   password = '';
-  rememberMe = false;
   readonly errorMessage = signal('');
   readonly successMessage = signal('');
   readonly isLoading = signal(false);
@@ -34,13 +33,12 @@ export class LoginComponent {
 
     this.authService.login({
       identifier: this.identifier,
-      password: this.password,
-      rememberMe: this.rememberMe
+      password: this.password
     }).subscribe({
       next: (response) => {
         this.isLoading.set(false);
         if (response.success) {
-          this.successMessage.set(`Welcome back, ${response.username}! Redirecting...`);
+          this.successMessage.set(`Welcome, ${response.username}! Redirecting...`);
           setTimeout(() => this.router.navigate(['/home']), 1500);
         } else {
           this.errorMessage.set(response.message || 'Invalid credentials. Please try again.');

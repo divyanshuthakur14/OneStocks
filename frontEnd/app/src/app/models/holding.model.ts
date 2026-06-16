@@ -1,4 +1,4 @@
-// src/app/models/holding.model.ts
+
 export interface HoldingDTO {
   symbol: string;
   stockName: string;

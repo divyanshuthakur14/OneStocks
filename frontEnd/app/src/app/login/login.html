@@ -1,57 +1,104 @@
-<div class="background" style="background-color: #ffffff; min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center;">
-<div class="login-container" style="background-color: rgba(248, 250, 252, 0.5); padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
-  <h2>Welcome Back</h2>
+<div class="stage">
 
-  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+  <!-- Decorative grain + glow layers -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="glow glow-a" aria-hidden="true"></div>
+  <div class="glow glow-b" aria-hidden="true"></div>
 
-    <div class="form-group">
-      <label for="identifier">Email or Username</label>
-      <input
-        id="identifier"
-        type="text"
-        [(ngModel)]="identifier"
-        name="identifier"
-        placeholder="Enter your email or username"
-      />
-    </div>
+  <main class="card">
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        placeholder="Enter your password"
-      />
-    </div>
+    <!-- LEFT: editorial panel -->
+    <aside class="aside">
+      <div class="aside-top">
+        <span class="mark">✦</span>
+        <span class="mark-text">N°&nbsp;01 / Access</span>
+      </div>
 
-    <div class="form-group checkbox-group" (click)="$event.stopPropagation()">
-      <input
-        id="rememberMe"
-        type="checkbox"
-        [(ngModel)]="rememberMe"
-        name="rememberMe"
-        (click)="$event.stopPropagation()"
-      />
-      <label for="rememberMe" (click)="$event.stopPropagation()">Remember me</label>
-    </div>
+      <div class="aside-mid">
+        <h1 class="display">
+          <span class="word">Welcome</span>
+          <span class="word italic">back,</span>
+          <span class="word small">— please sign in.</span>
+        </h1>
+        <p class="lede">
+          A quiet door. <br/>
+          The same one you left through.
+        </p>
+      </div>
 
-@if (errorMessage()) {
-  <p class="error-message">{{ errorMessage() }}</p>
-}
-@if (successMessage()) {
-  <p class="success-message">{{ successMessage() }}</p>
-}
+      <div class="aside-bottom">
+        <div class="dotline" aria-hidden="true"></div>
+        <p class="footnote">
+          Encrypted &middot; Tuesday &middot; <span>Est. MMXXVI</span>
+        </p>
+      </div>
+    </aside>
 
-<button type="submit" [disabled]="isLoading()">
-  {{ isLoading() ? 'Logging in...' : 'Log In' }}
-</button>
+    <!-- RIGHT: form panel -->
+    <section class="form-panel">
 
-  </form>
+      <header class="form-head">
+        <span class="kicker">The Threshold</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="kicker muted">Members only</span>
+      </header>
 
-  <p class="signup-link">
-    Don't have an account? <a routerLink="/signup">Sign up</a>
-  </p>
-</div>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="form" novalidate>
+
+        <div class="field">
+          <input
+            id="identifier"
+            type="text"
+            [(ngModel)]="identifier"
+            name="identifier"
+            placeholder=" "
+            autocomplete="username"
+          />
+          <label for="identifier">Email or Username</label>
+          <span class="underline" aria-hidden="true"></span>
+        </div>
+
+        <div class="field">
+          <input
+            id="password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder=" "
+            autocomplete="current-password"
+          />
+          <label for="password">Password</label>
+          <span class="underline" aria-hidden="true"></span>
+        </div>
+
+        @if (errorMessage()) {
+          <p class="message error-message" role="alert">
+            <span class="msg-bar" aria-hidden="true"></span>
+            {{ errorMessage() }}
+          </p>
+        }
+        @if (successMessage()) {
+          <p class="message success-message" role="status">
+            <span class="msg-bar" aria-hidden="true"></span>
+            {{ successMessage() }}
+          </p>
+        }
+
+        <button type="submit" [disabled]="isLoading()" class="enter-btn">
+          <span class="btn-label">
+            {{ isLoading() ? 'Opening the door…' : 'Enter' }}
+          </span>
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </button>
+
+      </form>
+
+      <p class="signup-link">
+        New here?
+        <a routerLink="/signup">Request a key<span class="arr" aria-hidden="true">↗</span></a>
+      </p>
+
+    </section>
+
+  </main>
 </div>
